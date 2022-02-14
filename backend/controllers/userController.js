@@ -42,7 +42,7 @@ const registerUser = async (req,res) => {
         throw new error('Invalid user data');
     }
    } catch(e) {
-    res.status(400).send({ error: e.message });
+    res.status(400).send({ message: e.message });
    }
 };
 
@@ -73,7 +73,7 @@ const loginUser = async (req,res) => {
         throw new error('Invalid User Data');
     }
    } catch(e) {
-    res.status(401).send({ error: e.message });
+    res.status(401).send({ message: e.message });
    }
 
 
@@ -101,7 +101,7 @@ try {
         throw new error('Invalid User Data');
     }
    } catch(e) {
-    res.status(401).send({ error: e.message });
+    res.status(401).send({ message: e.message });
    }
 };
 

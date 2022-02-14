@@ -11,6 +11,7 @@ const auth = async(req,res,next) => {
         {
 
         const { name, email, password } = req.body;
+        
 
         // validation
         if(!name || !email || !password) {
@@ -49,8 +50,10 @@ const auth = async(req,res,next) => {
         }
     }
 
-    if(url_parts.pathname.includes('my-profile')) {
+    if(!url_parts.pathname.includes('login') && !url_parts.pathname.includes('register')) {
         
+     
+       
         // validate tokens to protect routes
         let tokenval;
         if(req.headers.authorization && req.headers.authorization.startsWith('Bearer'))
@@ -58,7 +61,6 @@ const auth = async(req,res,next) => {
            tokenval = req.headers.authorization.split(' ')[1];
            const decoded = jwt.verify(tokenval, process.env.JWT_SECRET);
 
-           console.log(decoded);
 
         //    Get user from decoded token
         // select -password means fetch everything but password
@@ -79,7 +81,7 @@ const auth = async(req,res,next) => {
         next();
     } catch(err) {
         res.status(401).json({
-            error: err.message,
+            message: err.message,
             stacktrace: process.env.NODE_ENV === 'production' ? null : err.stack
         });
     }
