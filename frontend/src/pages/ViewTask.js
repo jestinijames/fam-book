@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getTaskAction, reset, closeTaskAction } from '../store/tasks/taskSlice';
 import { createNoteAction, getNotesAction, reset as notesReset } from '../store/notes/noteSlice';
 
+
 // react-router
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -161,7 +162,7 @@ if(isError || notesIsError) {
 
            {
               notes && notes.map((note)=> {
-                  return <NoteItem key={note._id} note={note} />
+                  return <NoteItem key={note._id} note={note} taskId={task._id} />
                })
            }
       {task.status !== 'Done' && (<button onClick={onTicketClose} className='btn btn-block btn-danger'>Mark as completed</button>) }

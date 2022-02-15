@@ -31,6 +31,22 @@ export const createTaskAction = createAsyncThunk('tasks/create',async(taskData, 
         }
 });
 
+// Delete Task for user
+export const deleteTaskAction = createAsyncThunk('tasks/delete', async(taskId, thunkAPI) => {
+    try {
+    const token = (thunkAPI.getState().authReducer.user.token);  //This comes from user returned in authreducer.
+    return await taskService.deleteTask(taskId, token);
+
+} catch(error) {
+    const message = (error.response && 
+        error.response.data && 
+        error.response.data.message) ||
+        error.message ||
+        error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+});
+
 // Get all Tasks
 export const getTasksAction = createAsyncThunk('tasks/getAll', async(_, thunkAPI) => { //we put an '_' because we still need access to thunkAPI
 try {
@@ -125,6 +141,20 @@ state.isSuccess = true;
     state.task = action.payload;
 })
 .addCase(getTaskAction.rejected, (state,action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.payload; 
+})
+.addCase(deleteTaskAction.pending, (state) => {
+    state.isLoading = true;    
+})
+.addCase(deleteTaskAction.fulfilled, (state,action) => {
+    state.isLoading = false;
+    state.isSuccess = true;
+    state.tasks = action.payload;
+})
+.addCase(deleteTaskAction.rejected, (state,action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;

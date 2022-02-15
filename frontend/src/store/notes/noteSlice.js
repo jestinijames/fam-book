@@ -47,6 +47,23 @@ export const createNoteAction = createAsyncThunk('note/create',async(noteData, t
         }
 });
 
+
+// Delete Task note for user
+export const deleteNoteAction = createAsyncThunk('note/delete', async(noteData, thunkAPI)=> {
+    try {
+        const token = (thunkAPI.getState().authReducer.user.token);  //This comes from user returned in authreducer.
+        return await noteService.deleteNote(noteData, token);
+
+    } catch(error) {
+        const message = (error.response && 
+            error.response.data && 
+            error.response.data.message) ||
+            error.message ||
+            error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+});
+
 export const noteSlice = createSlice({
 name: 'noteSlice',
 initialState: initialNoteState,
@@ -71,17 +88,31 @@ extraReducers: (builder) => {
     .addCase(createNoteAction.pending, (state) => {
         state.isLoading = true;    
         })
-        .addCase(createNoteAction.fulfilled, (state,action) => {
+    .addCase(createNoteAction.fulfilled, (state,action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.notes.push(action.payload);
         })
-        .addCase(createNoteAction.rejected, (state,action) => {
+    .addCase(createNoteAction.rejected, (state,action) => {
             state.isLoading = false;
             state.isSuccess = false;
             state.isError = true;
             state.message = action.payload; 
         })
+    .addCase(deleteNoteAction.pending, (state) => {
+            state.isLoading = true;    
+        })
+    .addCase(deleteNoteAction.fulfilled, (state,action) => {
+            state.isLoading = false;
+            state.isSuccess = true;
+            state.notes = action.payload;
+        })
+    .addCase(deleteNoteAction.rejected, (state,action) => {
+                state.isLoading = false;
+                state.isSuccess = false;
+                state.isError = true;
+                state.message = action.payload; 
+        })    
 }
 });
 

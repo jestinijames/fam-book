@@ -2,6 +2,7 @@
 // Models
 const User = require('../models/userModel');
 const Task = require('../models/taskModel');
+const Note = require('../models/noteModel');
 
 // @desc    POST Create user tasks
 // @route   /api/tasks
@@ -132,7 +133,7 @@ const deleteTask = async(req,res) => {
      if(!user) {
          throw new Error('User Not Found');
      }   
-    
+    console.log(req.params.id);
      const task = await Task.findById(req.params.id);
      if(!task){
          throw new Error("Task not found");
@@ -142,9 +143,13 @@ const deleteTask = async(req,res) => {
          throw new Error('Not authorized for this user');
      }
 
+    //  We need to delete all notes for this task as well
+     await Note.findOneAndDelete({ task: req.params.id }); 
+
      await task.remove();
 
-     res.status(200).json({ success: true });
+     const tasks = await Task.find({user: req.user._id});
+     res.status(200).json(tasks);
     
     } catch(e) {
         res.status(401).send({ message: e.message });

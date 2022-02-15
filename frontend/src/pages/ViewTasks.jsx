@@ -56,7 +56,8 @@ return () => {
      )
   }
 
-  return <h3>Something went wrong</h3>
+
+  return <h3>No Tasks For Today.</h3>
 
   
 }
