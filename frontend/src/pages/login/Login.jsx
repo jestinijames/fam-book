@@ -3,11 +3,19 @@ import { FaSignInAlt } from 'react-icons/fa';
 
 // redux dev tools
 import { useSelector, useDispatch } from "react-redux";
-import { loginAction, reset } from "../store/auth/authSlice";
+import { loginAction, reset } from "../../store/auth/authSlice";
 
 // React Router
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+
+// Components
+import Spinner from "../../components/Spinner";
+import Logo from "../../components/Logo";
+
+// Styles
+import './login.css';
+
 
 
 const Login = () => {
@@ -53,32 +61,36 @@ const onValueChange = (e) => {
    dispatch(loginAction(userData));
     };
 
+    if(isLoading) {
+        return <Spinner />
+    }
+
 return (
 <Fragment>
-<section className="heading">
+<div className="login">
+    <div className="loginWrapper">
+      <Logo/>
+
+      <div className="loginRight">
+      <section className="heading">
       <h1>
           <FaSignInAlt /> Login
       </h1>
       <p>Log in Here</p>
   </section>
-  <section className="form">
-      <form onSubmit={onFormSubmit}>
-     <div className="form-group">
-           <input 
-           type="email"
-           className="form-control"
-           id="email"
-           name="email"
-           value={email}
-           onChange={onValueChange}
-           placeholder='Enter email'
-           required
-           />
-       </div>
-       <div className="form-group">
-           <input 
+        <form className="loginBox" onSubmit={onFormSubmit} >
+          <input
+            type="email"
+            className="loginInput"
+            id="email"
+            name="email"
+            value={email}
+            onChange={onValueChange}
+            placeholder='Enter email'
+          />
+          <input 
            type="password"
-           className="form-control"
+           className="loginInput"
            id="password"
            name="password"
            value={password}
@@ -86,12 +98,24 @@ return (
            placeholder='Enter password'
            required
            />
-       </div>
-       <div className="form-group">
-           <button className="btn btn-block">Submit</button>
-       </div>
-      </form>
-  </section>
+           <button className="loginButton">Submit</button> 
+           <span className="loginForgot">Forgot Password?</span>
+           <Link className="loginForgot" to='/register'>Create a new Account</Link>
+          {/* <button className="loginButton" type="submit" disabled={isFetching}>
+          Log In
+          </button>
+          
+          <button className="loginRegisterButton">
+            {isFetching ? (
+              <CircularProgress color="white" size="20px" />
+            ) : (
+              "Create a New Account"
+            )}
+          </button> */}
+        </form>
+      </div>
+    </div>
+  </div>
 </Fragment>
 );
 };

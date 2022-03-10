@@ -1,90 +1,111 @@
-const User = require('../models/userModel');
-const url  = require('url');
+// Middleware to protect routes and authenticate user
 const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
+const url = require('url');
+const bcrypt = require('bcrypt');
+const asyncHandler =  require('express-async-handler');
 
 
-const auth = async(req,res,next) => {
-    try {
 
-        const url_parts = url.parse(req.url);
-        if(url_parts.pathname.includes('register'))
-        {
+const auth = asyncHandler(async(req,res,next) => {
 
-        const { name, email, password } = req.body;
-        
-
-        // validation
-        if(!name || !email || !password) {
-         throw new Error('Please include all fields');
-        }
     
-        // Find if user already exists
-        const user = await User.findOne({email: email});
-        if(user) {
-            throw new Error('User already exists');
-        }
+    const url_parts = url.parse(req.url);
+ 
+            if(url_parts.pathname.includes('register')) {
+               // console.log(req.body);
+                const { username, email, password, avatar } = req.body;
+                //console.log(avatar);
+                
+                // Validation
+                if(!username || !email || !password) {
+                    res.status(400);
+                    throw new Error('Please Include All Fields!');
+                }
 
+                // Find if user exists
+                const user = await User.findOne({email});
+                if(user) {
+                    res.status(400);
+                    throw new Error('User Already Exists!');
+                }
+
+                // Hash Password
+                const hashedPassword = await bcrypt.hash(password, 8);
+
+
+             
+
+                req.name = username;
+                req.email = email;
+                req.password = hashedPassword;
+                req.avatar = avatar;
+
+
+            }
+
+            if(url_parts.pathname.includes('login')) {
+                const { email, password } = req.body;
         
-
-        req.user = user;   
-        req.name = name;
-        req.email = email;
-        req.password  = password;
+                // validation
+                if(!email || !password) {
+                    res.status(400);
+                    throw new Error('Please Include All Fields!');
+                   }
         
-    }
+                    // Find user
+                const user = await User.findOne({email: email});
+                if(user) {
+                    const isMatch = await bcrypt.compare(password, user.password);
+                    if(!isMatch) {
+                        res.status(404);
+                        throw new Error('Invalid Credentials!');
+                    }
+                    await User.findByIdAndUpdate(user._id, {isLoggedIn: true});
+                    req.user = user;
+                }
+            }
 
-    if(url_parts.pathname.includes('login')) {
-        const { email, password } = req.body;
+            
 
-        // validation
-        if(!email || !password) {
-            throw new Error('Please include all fields');
-           }
+            if(!url_parts.pathname.includes('login') && !url_parts.pathname.includes('register')) {
+                // validate tokens to protect routes
+                let tokenval;
+               // console.log('asda')
+                let authorizationHeader = req.headers.authorization;
+                if(url_parts.pathname.includes('logout')) { 
+                    authorizationHeader = req.body.headers.authorization;
+                }
 
-            // Find user
-        const user = await User.findOne({email: email});
-        if(user) {
-            req.user = user;
-            req.email = email;
-            req.password  = password;
-        }
-    }
-
-    if(!url_parts.pathname.includes('login') && !url_parts.pathname.includes('register')) {
-        
-     
-       
-        // validate tokens to protect routes
-        let tokenval;
-        if(req.headers.authorization && req.headers.authorization.startsWith('Bearer'))
-        {
-           tokenval = req.headers.authorization.split(' ')[1];
-           const decoded = jwt.verify(tokenval, process.env.JWT_SECRET);
+                if(authorizationHeader && authorizationHeader.startsWith('Bearer'))
+                { 
+                  // console.log(req.body.headers.authorization);
+                tokenval = authorizationHeader.split(' ')[1];
+                //console.log(tokenval);
+                const decoded = jwt.verify(tokenval, process.env.JWT_SECRET);
+                //console.log(decoded);
 
 
-        //    Get user from decoded token
-        // select -password means fetch everything but password
-        const searchedUser = await User.findOne({ _id: decoded._id }).select('-password');
-        if(searchedUser) {
-            req.user = searchedUser;
-        }
-        else {
-            throw new Error('Not Authorized');
-        }   
-        
-        }
-        if(!tokenval) {
-            throw new Error('Not Authorized');
-        }
-    }
-       
-        next();
-    } catch(err) {
-        res.status(401).json({
-            message: err.message,
-            stacktrace: process.env.NODE_ENV === 'production' ? null : err.stack
-        });
-    }
-};
+                //    Get user from decoded token
+                // select -password means fetch everything but password
+                const searchedUser = await User.findOne({ _id: decoded._id }).select('-password');
+                if(searchedUser) {
+                    await User.findByIdAndUpdate(decoded._id, {isLoggedIn: true});
+                    req.user = searchedUser;
+                }
+                else {
+                    res.status(403);
+                    throw new Error('Not Authorized!');
+                }   
+                
+                }
+                if(!tokenval) {
+                    res.status(403);
+                    throw new Error('Not Authorized!');
+                }
+            }
+
+        next(); 
+});
 
 module.exports = auth;
