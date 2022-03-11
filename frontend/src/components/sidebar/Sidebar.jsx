@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import "./sidebar.css";
+
 import {
   RssFeed,
   Chat,
@@ -16,7 +16,23 @@ import {
 import { Users } from '../../dummyData';
 import CloseFriend from '../closeFriend/CloseFriend';
 
+import { fetchUsers, reset } from '../../store/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
+import "./sidebar.css";
+
+
 const Sidebar = () => {
+
+  const { users, user } = useSelector((state) => state.authReducer);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  },[dispatch])
+
+ const allUsers = users && user && users.filter((u) => u._id !== user._id); 
+
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
@@ -60,9 +76,10 @@ const Sidebar = () => {
         </ul>
         <button className="sidebarButton">Show More</button>
         <hr className="sidebarHr" />
+        <h4 className="rightbarTitle">All Users</h4>
         <ul className="sidebarFriendList">
-          {Users.map((u) => (
-            <CloseFriend key={u.id} user={u} />
+          {allUsers && allUsers.map((u) => (
+            <CloseFriend key={u._id} user={u} />
           ))}
         </ul>
       </div>

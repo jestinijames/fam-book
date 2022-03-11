@@ -94,8 +94,12 @@ const logout = async(token) => {
     const response = await axios.get(API_URL,config);
     if(response.data)
     {
-        return response.data;
-    } 
+        let responses = response.data;
+        for(let i=0; i<responses.length; i++) {
+            responses[i].imageUrl = await getImage(responses[i].profilePicture);
+        }  
+    }
+    return response.data; 
   };
 
 
