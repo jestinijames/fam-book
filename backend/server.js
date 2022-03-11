@@ -32,6 +32,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(morgan('common'));
 
+// Get socket
+const { socketConnection } = require('./socket');
+socketConnection();
 
 // Handling any type of error with status middle ware
 const { errorHandler } = require('./middleware/errorMiddleware');
