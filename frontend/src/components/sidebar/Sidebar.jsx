@@ -13,11 +13,12 @@ import {
   School,
 } from "@material-ui/icons";
 
-import { Users } from '../../dummyData';
 import CloseFriend from '../closeFriend/CloseFriend';
+
 
 import { fetchUsers, reset } from '../../store/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import "./sidebar.css";
 
@@ -29,6 +30,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     dispatch(fetchUsers());
+    dispatch(reset());
   },[dispatch])
 
  const allUsers = users && user && users.filter((u) => u._id !== user._id); 
@@ -41,10 +43,12 @@ const Sidebar = () => {
             <RssFeed className="sidebarIcon" />
             <span className="sidebarListItemText">Feed</span>
           </li>
-          <li className="sidebarListItem">
-            <Chat className="sidebarIcon" />
-            <span className="sidebarListItemText">Chats</span>
-          </li>
+          <Link to="/messenger">
+            <li className="sidebarListItem">
+              <Chat className="sidebarIcon" />
+              <span className="sidebarListItemText">Chats</span>
+            </li>
+          </Link>
           <li className="sidebarListItem">
             <PlayCircleFilledOutlined className="sidebarIcon" />
             <span className="sidebarListItemText">Videos</span>

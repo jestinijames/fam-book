@@ -60,9 +60,9 @@ export const loginAction = createAsyncThunk('auth/login', async(user, thunkAPI) 
 
 
 // Fetch images for users
-export const fetchImages = createAsyncThunk('auth/images', async(user, thunkAPI) => {
+export const fetchImages = createAsyncThunk('auth/images', async(avatar, thunkAPI) => {
     try {
-        return await authService.getImage(user);
+        return await authService.getUserImage(avatar);
         } catch(error) {
             const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
             return thunkAPI.rejectWithValue(message);

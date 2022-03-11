@@ -4,7 +4,7 @@ import "./closeFriend.css";
 
 const CloseFriend = ({user}) => {
   return (
-    <Link to={`profile/${user._id}`}>
+    <Link to={`/profile/${user._id}`}>
     <li className="sidebarFriend">
       <img className="sidebarFriendImg" src={user.imageUrl} alt={user.username} />
       <span className="sidebarFriendName">{user.username}</span>

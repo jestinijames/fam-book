@@ -29,20 +29,18 @@ const Profile = () => {
     const { isLoading, isSuccess, isError, message, profile } = useSelector((state) => state.authReducer);
     const dispatch = useDispatch();
 
-    // useEffect(()=>{
-    //     if(isError) {
-    //       toast.error(message);
-    //   }
-    //   if(isSuccess) {
-    //     dispatch(reset());
-    // }
+    useEffect(()=>{
+        if(isError) {
+          toast.error(message);
+      }
+      if(isSuccess) {
+        dispatch(reset());
+    }
     
-    //     dispatch(fetchUser(id));
-    //   },[dispatch, isError, message])
+        dispatch(fetchUser(id));
+      },[dispatch, isError, message, id])
 
-if(isLoading) {
-    return <Spinner/>;
-}
+
 
 return (
   <>

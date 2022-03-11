@@ -1,22 +1,30 @@
 import React from 'react';
-import {PermMedia, Label,Room, EmojiEmotions} from "@material-ui/icons";
 
+import { useSelector } from 'react-redux';
 
 // Styles
+import {PermMedia, Label,Room, EmojiEmotions} from "@material-ui/icons";
 import './sharebox.css';
 
 
-const ShareBox = ({avatar}) => {
+
+const ShareBox = () => {
+
+  const { user, userImg } = useSelector((state) => state.authReducer); 
 
   return (
     <div className="share">
       <div className="shareWrapper">
         <div className="shareTop">
-          <img className="shareProfileImg" src={avatar} alt="" />
-          <input
-            placeholder="What do you want to share today?"
-            className="shareInput"
-          />
+        {user && userImg && 
+        <>
+        <img className="shareProfileImg" src={userImg} alt="" />
+        <input
+          placeholder={`What do you want to share today, ${user.name} ?`}
+          className="shareInput"
+        />
+        </>
+        }  
         </div>
         <hr className="shareHr"/>
         <div className="shareBottom">

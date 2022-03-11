@@ -2,7 +2,7 @@ import { Search, Person, Chat, Notifications } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { logoutAction, reset } from "../../store/auth/authSlice";
+import { logoutAction, fetchImages, reset } from "../../store/auth/authSlice";
 
 import axios from 'axios';
 
@@ -16,8 +16,10 @@ const TopBar = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user } = useSelector((state) => state.authReducer);
-    const [userImg, setUserImg] = useState(null);
+
+
+    const { user, userImg } = useSelector((state) => state.authReducer);
+  
 
 
 
@@ -28,16 +30,7 @@ const TopBar = () => {
     };
 
     useEffect(()=> {
-      try {
-        const getImage = async() => {
-          const res = await axios.get('/images/' + (user.avatar), {responseType: 'blob'})      
-              let imageUrl = URL.createObjectURL(res.data);
-              setUserImg(imageUrl);
-        };
-        getImage();
-      } catch(e) {
-        console.log(e);
-      }
+      dispatch(fetchImages(user.avatar));
     },[]);
 
     return (

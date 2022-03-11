@@ -18,6 +18,7 @@ const Home = React.lazy(() => import('./pages/home/Home'));
 const Login = React.lazy(() => import('./pages/login/Login'));
 const Register = React.lazy(() => import('./pages/register/Register'));
 const Profile = React.lazy(() => import('./pages/profile/Profile'));
+const Messenger = React.lazy(() => import('./pages/messenger/Messenger'));
 
 const App = () => {
 return (
@@ -32,6 +33,9 @@ return (
     </Route>
     <Route path='/profile/:id' element={<PrivateRoute/>}>
        <Route path='/profile/:id' element={<Profile/>} />
+    </Route>
+    <Route path='/messenger' element={<PrivateRoute/>}>
+       <Route path='/messenger' element={<Messenger/>} />
     </Route>
   </Routes>
  </Suspense>

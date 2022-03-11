@@ -45,6 +45,11 @@ const logout = async(token) => {
     return 'Image Uploaded!';
   };
 
+  const getUserImage = async(avatar) => {
+    const userImg = await getImage(avatar);
+    return userImg;
+  };
+
   const getImage = async(data) => {
     const res = await axios.get('/images/' + data, {responseType: 'blob'})
         
@@ -110,6 +115,7 @@ const authService = {
     logout,
     upload,
     getImage,
+    getUserImage,
     getUser,
     getUsers,
     getFriends
