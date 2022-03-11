@@ -17,7 +17,7 @@ import PrivateRoute from './components/PrivateRoute';
 const Home = React.lazy(() => import('./pages/home/Home'));
 const Login = React.lazy(() => import('./pages/login/Login'));
 const Register = React.lazy(() => import('./pages/register/Register'));
-
+const Profile = React.lazy(() => import('./pages/profile/Profile'));
 
 const App = () => {
 return (
@@ -29,6 +29,9 @@ return (
     <Route path='/login' element={<Login/>} />
     <Route path='/' element={<PrivateRoute/>}>
        <Route path='/' element={<Home/>} />
+    </Route>
+    <Route path='/profile/:id' element={<PrivateRoute/>}>
+       <Route path='/profile/:id' element={<Profile/>} />
     </Route>
   </Routes>
  </Suspense>

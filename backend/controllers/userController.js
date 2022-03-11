@@ -79,7 +79,6 @@ const loginUser = (async(req,res) => {
 
 const logoutUser = (async(req,res) => {
    try {
-       console.log(req.user);
     if(req.user)
     {
         await User.findByIdAndUpdate(req.user._id, {isLoggedIn: false});
@@ -150,7 +149,6 @@ const getUserFriends = (async(req,res) => {
 
 const getUsers = (async(req,res) => { 
     try {
-       // console.log('s');
         const users = await User.find().select(["_id", "username", "email", "profilePicture", "isLoggedIn"]);
         if(!users){
             throw new Error("No Users Found!");
